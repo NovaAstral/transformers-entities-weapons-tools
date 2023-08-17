@@ -76,6 +76,16 @@ function ENT:OpenGroundBridge()
 		self.Bridge2:SetModelScale(0,0)
 	end
 
+	timer.Create("BridgeIdleSound"..self:EntIndex(),1,1,function()
+		if(IsValid(self.Bridge1)) then
+			self.Bridge1:EmitSound("ambience/dronemachine3.wav")
+		end
+
+		if(IsValid(self.Bridge2)) then
+			self.Bridge2:EmitSound("ambience/dronemachine3.wav")
+		end
+	end)
+
 	self.Bridge1:SetNWBool("On",true)
 	self.Bridge2:SetNWBool("On",true)
 
