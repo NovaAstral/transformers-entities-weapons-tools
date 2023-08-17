@@ -42,6 +42,7 @@ function ENT:Initialize()
 	self.Bridge2PosEnt = nil
 
 	self.Mode = 0
+	self.Size = 1
 		
 	if(phys:IsValid()) then
 		phys:SetMass(100)
@@ -53,8 +54,8 @@ function ENT:Initialize()
 	print(self.Entity.Owner)
 
 	self.Inputs = WireLib.CreateSpecialInputs(self.Entity,
-	{"Activate","Bridge1 Pos","Bridge2 Pos","Reset","Mode"},
-	{"NORMAL","ENTITY","ENTITY","NORMAL","NORMAL"})
+	{"Activate","Bridge1 Pos","Bridge2 Pos","Reset","Mode","Size"},
+	{"NORMAL","ENTITY","ENTITY","NORMAL","NORMAL","NORMAL"})
 	
 end
 
@@ -106,11 +107,25 @@ function ENT:OpenGroundBridge()
 			self.Bridge2:SetNWInt("GroundBridgeCol_G",255)
 			self.Bridge2:SetNWInt("GroundBridgeCol_B",158)
 		end
+	elseif(self.Mode == 2) then
+		if(IsValid(self.Bridge1)) then
+			self.Bridge1:SetColor(Color(255,95,215))
+			self.Bridge1:SetNWInt("GroundBridgeCol_R",255)
+			self.Bridge1:SetNWInt("GroundBridgeCol_G",95)
+			self.Bridge1:SetNWInt("GroundBridgeCol_B",215)
+		end
+		
+		if(IsValid(self.Bridge2)) then
+			self.Bridge2:SetColor(Color(255,95,215))
+			self.Bridge2:SetNWInt("GroundBridgeCol_R",255)
+			self.Bridge2:SetNWInt("GroundBridgeCol_G",95)
+			self.Bridge2:SetNWInt("GroundBridgeCol_B",215)
+		end
 	end
 
 	timer.Create("BridgeOpen"..self:EntIndex(),0.1,1,function()
-		self.Bridge1:SetModelScale(1,0.3)
-		self.Bridge2:SetModelScale(1,0.3)
+		self.Bridge1:SetModelScale(self.Size,0.3)
+		self.Bridge2:SetModelScale(self.Size,0.3)
 
 		self.Bridge1:EmitSound("ground_bridge/ground_bridge_open.wav")
 		self.Bridge2:EmitSound("ground_bridge/ground_bridge_open.wav")
@@ -210,9 +225,13 @@ function ENT:TriggerInput(iname, value)
 	elseif(iname == "Mode") then
 		if(value >= 1) then
 			self.Mode = 1
+		if(value == -158) then
+			self.Mode = 2
 		else
 			self.Mode = 0
 		end
+	elseif(iname == "Size") then
+		self.Size = math.Clamp(value,0.1,2)
 	end
 end
 
