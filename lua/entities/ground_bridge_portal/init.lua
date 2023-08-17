@@ -10,6 +10,7 @@ ENT.WireDebugName = "Ground Bridge Portal"
 function ENT:SpawnFunction(ply, tr)
 	local ent = ents.Create("ground_bridge_portal")
 	ent:SetPos(tr.HitPos + Vector(0, 0, 20))
+	ent:SetVar("Owner",ply)
 	ent:Spawn()
 	return ent 
 end 
@@ -22,7 +23,7 @@ function ENT:Initialize()
 
 		return
 	end
-	
+
 	util.PrecacheModel("models/props_random/whirlpool22_narrow.mdl")
 	
 	self.Entity:SetModel("models/props_random/whirlpool22_narrow.mdl")
