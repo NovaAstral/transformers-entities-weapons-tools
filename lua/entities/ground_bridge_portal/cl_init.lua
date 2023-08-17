@@ -19,9 +19,9 @@ if CLIENT then
 
          if(dlight) then
             dlight.Pos = self:LocalToWorld(Vector(0,0,100))
-            dlight.r = 0
-            dlight.g = 255
-            dlight.b = 158
+            dlight.r = self:GetNWInt("GroundBridgeCol_R",0)
+            dlight.g = self:GetNWInt("GroundBridgeCol_G",255)
+            dlight.b = self:GetNWInt("GroundBridgeCol_B",158)
             dlight.Brightness = 2
             dlight.Decay = 1024 * 5
             dlight.Size = 1024

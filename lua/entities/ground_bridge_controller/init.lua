@@ -2,6 +2,8 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include('shared.lua')
 
+if(WireLib == nil) then return end
+
 ENT.WireDebugName = "Ground Bridge Controller"
 
 function ENT:SpawnFunction(ply, tr)
@@ -38,6 +40,8 @@ function ENT:Initialize()
 
 	self.Bridge1PosEnt = nil
 	self.Bridge2PosEnt = nil
+
+	self.Mode = 0
 		
 	if(phys:IsValid()) then
 		phys:SetMass(100)
@@ -49,8 +53,8 @@ function ENT:Initialize()
 	print(self.Entity.Owner)
 
 	self.Inputs = WireLib.CreateSpecialInputs(self.Entity,
-	{"Activate","Bridge1 Pos","Bridge2 Pos"},
-	{"NORMAL","ENTITY","ENTITY"})
+	{"Activate","Bridge1 Pos","Bridge2 Pos","Reset","Mode"},
+	{"NORMAL","ENTITY","ENTITY","NORMAL","NORMAL"})
 	
 end
 
@@ -66,7 +70,7 @@ function ENT:OpenGroundBridge()
 	if(!IsValid(self.Bridge2)) then
 		self.Bridge2 = ents.Create("ground_bridge_portal")
 		self.Bridge2:SetPos(self.Bridge2PosEnt:GetPos())
-		self.Bridge2:SetAngles(self.Bridge2PosEnt:Getangles())
+		self.Bridge2:SetAngles(self.Bridge2PosEnt:GetAngles())
 		self.Bridge2:Spawn()
 		self.Bridge2:SetModelScale(0,0)
 	end
@@ -74,17 +78,42 @@ function ENT:OpenGroundBridge()
 	self.Bridge1:SetNWBool("On",true)
 	self.Bridge2:SetNWBool("On",true)
 
+	if(self.Mode == 1) then
+		if(IsValid(self.Bridge1)) then
+			self.Bridge1:SetColor(Color(150,0,150))
+			self.Bridge1:SetNWInt("GroundBridgeCol_R",150)
+			self.Bridge1:SetNWInt("GroundBridgeCol_G",0)
+			self.Bridge1:SetNWInt("GroundBridgeCol_B",150)
+		end
+		
+		if(IsValid(self.Bridge2)) then
+			self.Bridge2:SetColor(Color(150,0,150))
+			self.Bridge2:SetNWInt("GroundBridgeCol_R",150)
+			self.Bridge2:SetNWInt("GroundBridgeCol_G",0)
+			self.Bridge2:SetNWInt("GroundBridgeCol_B",150)
+		end
+	elseif(self.Mode == 0) then
+		if(IsValid(self.Bridge1)) then
+			self.Bridge1:SetColor(Color(255,255,255))
+			self.Bridge1:SetNWInt("GroundBridgeCol_R",0)
+			self.Bridge1:SetNWInt("GroundBridgeCol_G",255)
+			self.Bridge1:SetNWInt("GroundBridgeCol_B",158)
+		end
+		
+		if(IsValid(self.Bridge2)) then
+			self.Bridge2:SetColor(Color(255,255,255))
+			self.Bridge2:SetNWInt("GroundBridgeCol_R",0)
+			self.Bridge2:SetNWInt("GroundBridgeCol_G",255)
+			self.Bridge2:SetNWInt("GroundBridgeCol_B",158)
+		end
+	end
+
 	timer.Create("BridgeOpen"..self:EntIndex(),0.1,1,function()
 		self.Bridge1:SetModelScale(1,0.3)
 		self.Bridge2:SetModelScale(1,0.3)
 
 		self.Bridge1:EmitSound("ground_bridge/ground_bridge_open.wav")
 		self.Bridge2:EmitSound("ground_bridge/ground_bridge_open.wav")
-	end)
-
-	timer.Create("BridgeIdleSound"..self:EntIndex(),1,1,function()
-		self.Bridge1:EmitSound("ambience/dronemachine3.wav")
-		self.Bridge2:EmitSound("ambience/dronemachine3.wav")
 	end)
 
 	timer.Create("BridgeTP"..self:EntIndex(),0.1,0,function()
@@ -169,6 +198,20 @@ function ENT:TriggerInput(iname, value)
 	elseif(iname == "Bridge2 Pos") then
 		if(IsValid(value)) then
 			self.Bridge2PosEnt = value
+		end
+	elseif(iname == "Reset") then
+		if(IsValid(self.Bridge1)) then
+			self.Bridge1:Remove()
+		end
+
+		if(IsValid(self.Bridge2)) then
+			self.Bridge2:Remove()
+		end
+	elseif(iname == "Mode") then
+		if(value >= 1) then
+			self.Mode = 1
+		else
+			self.Mode = 0
 		end
 	end
 end
