@@ -109,17 +109,17 @@ function ENT:OpenGroundBridge()
 		end
 	elseif(self.Mode == 2) then
 		if(IsValid(self.Bridge1)) then
-			self.Bridge1:SetColor(Color(255,95,215))
+			self.Bridge1:SetColor(Color(255,95,255))
 			self.Bridge1:SetNWInt("GroundBridgeCol_R",255)
 			self.Bridge1:SetNWInt("GroundBridgeCol_G",95)
-			self.Bridge1:SetNWInt("GroundBridgeCol_B",215)
+			self.Bridge1:SetNWInt("GroundBridgeCol_B",255)
 		end
 		
 		if(IsValid(self.Bridge2)) then
-			self.Bridge2:SetColor(Color(255,95,215))
+			self.Bridge2:SetColor(Color(255,95,255))
 			self.Bridge2:SetNWInt("GroundBridgeCol_R",255)
 			self.Bridge2:SetNWInt("GroundBridgeCol_G",95)
-			self.Bridge2:SetNWInt("GroundBridgeCol_B",215)
+			self.Bridge2:SetNWInt("GroundBridgeCol_B",255)
 		end
 	end
 
@@ -133,9 +133,9 @@ function ENT:OpenGroundBridge()
 
 	timer.Create("BridgeTP"..self:EntIndex(),0.1,0,function()
 		if(IsValid(self.Bridge1)) then
-			for k, v in ipairs(ents.FindInSphere(self.Bridge1:GetPos(),100)) do
+			for k, v in ipairs(ents.FindInSphere(self.Bridge1:GetPos(),self.Size*100)) do
 				if(v:GetClass() == "player") then
-					v:SetPos(self.Bridge2:LocalToWorld(Vector(0,0,200)))
+					v:SetPos(self.Bridge2:LocalToWorld(Vector(0,math.random(-50,50),math.random(250,400))))
 					v:SetVelocity(-v:GetVelocity()) --stop the player so they dont go back through the bridge
 
 					--jank way to get the player to face out of the exit bridge
@@ -145,9 +145,9 @@ function ENT:OpenGroundBridge()
 		end
 
 		if(IsValid(self.Bridge2)) then
-			for k, v in ipairs(ents.FindInSphere(self.Bridge2:GetPos(),100)) do
+			for k, v in ipairs(ents.FindInSphere(self.Bridge2:GetPos(),self.Size*100)) do
 				if(v:GetClass() == "player") then
-					v:SetPos(self.Bridge1:LocalToWorld(Vector(0,0,200)))
+					v:SetPos(self.Bridge1:LocalToWorld(Vector(0,math.random(-50,50),math.random(250,400))))
 					v:SetVelocity(-v:GetVelocity()) --stop the player so they dont go back through the bridge
 
 					--jank way to get the player to face out of the exit bridge
@@ -193,6 +193,7 @@ end
 function ENT:TriggerInput(iname, value)
 	if(iname == "Activate") then
 		self.Entity:EmitSound("buttons/coop_apc_lever.wav")
+
 		if(value >= 1) then
 			if(IsValid(self.Bridge1) and IsValid(self.Bridge2)) then
 				self:OpenGroundBridge()
@@ -225,7 +226,7 @@ function ENT:TriggerInput(iname, value)
 	elseif(iname == "Mode") then
 		if(value >= 1) then
 			self.Mode = 1
-		if(value == -158) then
+		elseif(value == -158) then
 			self.Mode = 2
 		else
 			self.Mode = 0
