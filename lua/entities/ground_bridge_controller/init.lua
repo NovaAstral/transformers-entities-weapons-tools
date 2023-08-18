@@ -66,6 +66,7 @@ function ENT:OpenGroundBridge()
 		self.Bridge1:SetAngles(self.Bridge1PosEnt:GetAngles())
 		self.Bridge1:Spawn()
 		self.Bridge1:SetModelScale(0,0)
+		self.Bridge1.backprop:SetModelScale(0,0)
 	end
 
 	if(!IsValid(self.Bridge2)) then
@@ -74,6 +75,7 @@ function ENT:OpenGroundBridge()
 		self.Bridge2:SetAngles(self.Bridge2PosEnt:GetAngles())
 		self.Bridge2:Spawn()
 		self.Bridge2:SetModelScale(0,0)
+		self.Bridge2.backprop:SetModelScale(0,0)
 	end
 
 	timer.Create("BridgeIdleSound"..self:EntIndex(),1,1,function()
@@ -136,6 +138,8 @@ function ENT:OpenGroundBridge()
 	timer.Create("BridgeOpen"..self:EntIndex(),0.1,1,function()
 		self.Bridge1:SetModelScale(self.Size,0.3)
 		self.Bridge2:SetModelScale(self.Size,0.3)
+		self.Bridge1.backprop:SetModelScale(-self.Size,0.3)
+		self.Bridge2.backprop:SetModelScale(-self.Size,0.3)
 
 		self.Bridge1:EmitSound("ground_bridge/ground_bridge_open.wav")
 		self.Bridge2:EmitSound("ground_bridge/ground_bridge_open.wav")
@@ -145,7 +149,7 @@ function ENT:OpenGroundBridge()
 		if(IsValid(self.Bridge1)) then
 			for k, v in ipairs(ents.FindInSphere(self.Bridge1:GetPos(),self.Size*100)) do
 				if(v:GetClass() == "player") then
-					v:SetPos(self.Bridge2:LocalToWorld(Vector(0,math.random(-50,50),math.random(250,400))))
+					v:SetPos(self.Bridge2:LocalToWorld(Vector(0,math.random(-self.Size*50,self.Size*50),math.random(self.Size*250,self.Size*400))))
 					v:SetVelocity(-v:GetVelocity()) --stop the player so they dont go back through the bridge
 
 					--jank way to get the player to face out of the exit bridge
@@ -157,7 +161,7 @@ function ENT:OpenGroundBridge()
 		if(IsValid(self.Bridge2)) then
 			for k, v in ipairs(ents.FindInSphere(self.Bridge2:GetPos(),self.Size*100)) do
 				if(v:GetClass() == "player") then
-					v:SetPos(self.Bridge1:LocalToWorld(Vector(0,math.random(-50,50),math.random(250,400))))
+					v:SetPos(self.Bridge1:LocalToWorld(Vector(0,math.random(-self.Size*50,self.Size*50),math.random(self.Size*250,self.Size*400))))
 					v:SetVelocity(-v:GetVelocity()) --stop the player so they dont go back through the bridge
 
 					--jank way to get the player to face out of the exit bridge
@@ -174,6 +178,7 @@ function ENT:CloseGroundBridge()
 	if(IsValid(self.Bridge1)) then
 		self.Bridge1:EmitSound("ground_bridge/ground_bridge_close.wav")
 		self.Bridge1:SetModelScale(0,0.3)
+		self.Bridge1.backprop:SetModelScale(0,0.3)
 		self.Bridge1:SetNWBool("On",false)
 
 		self.Bridge1:StopSound("ambience/dronemachine3.wav")
@@ -188,6 +193,7 @@ function ENT:CloseGroundBridge()
 	if(IsValid(self.Bridge2)) then
 		self.Bridge2:EmitSound("ground_bridge/ground_bridge_close.wav")
 		self.Bridge2:SetModelScale(0,0.3)
+		self.Bridge2.backprop:SetModelScale(0,0.3)
 		self.Bridge2:SetNWBool("On",false)
 
 		self.Bridge2:StopSound("ambience/dronemachine3.wav")

@@ -39,9 +39,26 @@ function ENT:Initialize()
 	
 	if(phys:IsValid()) then
 		phys:SetMass(100)
-		phys:EnableGravity(true)
+		phys:EnableGravity(false)
 		phys:Wake()
 		phys:EnableMotion(false)
+	end
+
+	self.backprop = ents.Create("prop_physics")
+	self.backprop:SetModel("models/props_random/whirlpool22_narrow.mdl")
+	self.backprop:SetPos(self.Entity:GetPos())
+	self.backprop:SetAngles(self.Entity:GetAngles()+Angle(180,0,0))
+	self.backprop:Spawn()
+	self.backprop:SetModelScale(-1,0)
+	self.backprop:SetNotSolid(true)
+	self.backprop:SetParent(self.Entity)
+
+	local backphys = self.backprop:GetPhysicsObject()
+	if(backphys:IsValid()) then
+		backphys:SetMass(100)
+		backphys:EnableGravity(false)
+		backphys:Wake()
+		backphys:EnableMotion(false)
 	end
 
 	self.Entity:SetNWBool("On",true)
@@ -53,4 +70,5 @@ end
 
 function ENT:OnRemove()
 	self:StopSound("ambience/dronemachine3.wav")
+	self.backprop:Remove()
 end
