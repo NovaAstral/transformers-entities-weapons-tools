@@ -25,8 +25,9 @@ function ENT:Initialize()
 
 	util.PrecacheModel("models/props_silo/desk_console2.mdl")
 
-	util.PrecacheSound("ground_bridge/ground_bridge_open")
-	util.PrecacheSound("ground_bridge/ground_bridge_close")
+	util.PrecacheSound("ground_bridge/ground_bridge_open.wav")
+	util.PrecacheSound("ground_bridge/ground_bridge_close.wav")
+	util.PrecacheSound("ground_bridge/ground_bridge_lever.wav")
 		
 	self.Entity:SetModel("models/props_silo/desk_console2.mdl")
 	
@@ -208,7 +209,7 @@ end
 
 function ENT:TriggerInput(iname, value)
 	if(iname == "Activate") then
-		self.Entity:EmitSound("buttons/coop_apc_lever.wav")
+		self.Entity:EmitSound("ground_bridge/ground_bridge_lever.wav")
 
 		if(value >= 1) then
 			if(IsValid(self.Bridge1) and IsValid(self.Bridge2)) then
