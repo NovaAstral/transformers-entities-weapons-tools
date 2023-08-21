@@ -1,6 +1,8 @@
 local SWEP = {Primary = {}, Secondary = {}} -- I don't know what this does
-
+SWEP.Author = "Nova Astral"
 SWEP.PrintName = "Phase Shifter"
+SWEP.Purpose = "Become Intangiable"
+SWEP.Instructions = "LMB - Enable Phase Shift \nRMB - Disable Phase Shift"
 SWEP.DrawCrosshair = true
 SWEP.SlotPos = 1
 SWEP.Slot = 1
@@ -97,4 +99,4 @@ if CLIENT then
     end
 end
 
-timer.Simple(0.1, function() weapons.Register(SWEP,"phase_shifter", true) end) --Putting this in a timer stops bugs from happening if the weapon is given while the game is paused
+timer.Simple(0.1, function() weapons.Register(SWEP,"tf_phase_shifter", true) end) --Putting this in a timer stops bugs from happening if the weapon is given while the game is paused

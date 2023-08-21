@@ -18,11 +18,13 @@ end
 function ENT:Initialize()
 	if(!util.IsValidModel("models/props_random/whirlpool22_narrow.mdl")) then
 		self.Entity.Owner:SendLua("GAMEMODE:AddNotify(\"Missing Whirlpool Model! Check your chat!\", NOTIFY_ERROR, 8); surface.PlaySound( \"buttons/button2.wav\" )")
-		self.Entity.Owner:PrintMessage(HUD_PRINTTALK,"You're missing the Whirlpool addon, install it at https://steamcommunity.com/sharedfiles/filedetails/?id=1524799867")
+		self.Entity.Owner:PrintMessage(HUD_PRINTTALK,"The Server is missing the Whirlpool addon, install it at https://steamcommunity.com/sharedfiles/filedetails/?id=1524799867")
 		self.Entity:Remove()
 
 		return
 	end
+
+	util.AddNetworkString("GroundBridgeColor"..self:EntIndex())
 
 	util.PrecacheModel("models/props_random/whirlpool22_narrow.mdl")
 	
@@ -53,6 +55,11 @@ function ENT:Initialize()
 	self.backprop:SetNotSolid(true)
 	self.backprop:SetParent(self.Entity)
 
+	timer.Simple(0.1,function()
+		self.backprop:SetColor(self.Entity:GetColor())
+	end)
+	
+
 	local backphys = self.backprop:GetPhysicsObject()
 	if(backphys:IsValid()) then
 		backphys:SetMass(100)
@@ -64,7 +71,7 @@ function ENT:Initialize()
 	self.Entity:SetNWBool("On",true)
 
 	timer.Create("BridgeIdleSound"..self:EntIndex(),1,1,function()
-		self.Entity:EmitSound("ambience/dronemachine3.wav")
+		self.Entity:EmitSound("ambience/dronemachine3.wav",75,100,0.5)
 	end)
 end
 

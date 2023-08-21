@@ -19,13 +19,20 @@ if CLIENT then
 
          if(dlight) then
             dlight.Pos = self:LocalToWorld(Vector(0,0,100))
-            dlight.r = self:GetNWInt("GroundBridgeCol_R",0)
-            dlight.g = self:GetNWInt("GroundBridgeCol_G",255)
-            dlight.b = self:GetNWInt("GroundBridgeCol_B",158)
-            dlight.Brightness = 2
+            dlight.Brightness = 1
             dlight.Decay = 1024 * 5
             dlight.Size = 1024
             dlight.DieTime = CurTime() + 1
+
+            if(self:GetColor() == Color(255,255,255)) then
+               dlight.r = 0
+               dlight.g = 255
+               dlight.b = 158
+            else
+               dlight.r = self:GetColor().r
+               dlight.g = self:GetColor().g
+               dlight.b = self:GetColor().b
+            end
          end
       end
 	end
