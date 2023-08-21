@@ -135,8 +135,7 @@ if(CLIENT)then
 
         local oldRT = render.GetRenderTarget()
 
-        render.SetRenderTarget(rtTexture)
-        render.SetViewPort(0,0,256,256)
+        render.PushRenderTarget(rtTexture,0,0,256,256)
 
         cam.Start2D()
             surface.SetDrawColor(Color(100,100,100))
@@ -145,9 +144,7 @@ if(CLIENT)then
             self:drawShadowedText("Controller",128,145,"TFBridgeController")
         cam.End2D()
 
-        render.SetRenderTarget(oldRT)
-        render.SetViewPort(0,0,ScrW(),ScrH())
-
+        render.PushRenderTarget(oldRT,0,0,ScrW(),ScrH())
     end
 
     function SWEP:drawShadowedText(text, x, y, font)

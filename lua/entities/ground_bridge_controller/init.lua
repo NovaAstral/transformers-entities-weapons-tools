@@ -48,6 +48,7 @@ function ENT:Initialize()
 	self.BridgeActive = false
 	self.Size = 1
 	self.Dist = 100
+	self.Reset = 0
 
 	self.BridgeColor = Vector(255,255,255)
 		
@@ -103,10 +104,12 @@ function ENT:OpenGroundBridge()
 
 	if(IsValid(self.Bridge1)) then
 		self.Bridge1:SetColor(Color(self.BridgeColor.x,self.BridgeColor.y,self.BridgeColor.z))
+		self.Bridge1.backprop:SetColor(Color(self.BridgeColor.x,self.BridgeColor.y,self.BridgeColor.z))
 	end
 
 	if(IsValid(self.Bridge2)) then
 		self.Bridge2:SetColor(Color(self.BridgeColor.x,self.BridgeColor.y,self.BridgeColor.z))
+		self.Bridge2.backprop:SetColor(Color(self.BridgeColor.x,self.BridgeColor.y,self.BridgeColor.z))
 	end
 
 	timer.Create("BridgeOpen"..self:EntIndex(),0.1,1,function()
@@ -206,22 +209,35 @@ function ENT:ResetBridge()
 	end
 end
 
+function ENT:WireTriggerBridge(value)
+	if(value >= 1) then
+		if(IsValid(self.Bridge1) and IsValid(self.Bridge2)) then
+			self:OpenGroundBridge()
+		else
+			if(self.Bridge1Pos == Vector(0,0,0) or self.Bridge2Pos == Vector(0,0,0)) then
+				self.Entity:EmitSound("buttons/button2.wav",100,100,1,CHAN_AUTO,0,0)
+			else
+				self:OpenGroundBridge()
+			end
+		end
+	else
+		self:CloseGroundBridge()
+	end
+end
+
 function ENT:TriggerInput(iname, value)
 	if(iname == "Activate") then
 		self.Entity:EmitSound("ground_bridge/ground_bridge_lever.wav")
 
-		if(value >= 1) then
-			if(IsValid(self.Bridge1) and IsValid(self.Bridge2)) then
-				self:OpenGroundBridge()
-			else
-				if(self.Bridge1Pos == Vector(0,0,0) or self.Bridge2Pos == Vector(0,0,0)) then
-					self.Entity:EmitSound("buttons/button2.wav",100,100,1,CHAN_AUTO,0,0)
-				else
-					self:OpenGroundBridge()
-				end
-			end
+		
+		if(self.Reset == 1 and value >= 1) then
+			self:ResetBridge()
+
+			timer.Simple(0.1,function()
+				self:WireTriggerBridge(value)
+			end)
 		else
-			self:CloseGroundBridge()
+			self:WireTriggerBridge(value)
 		end
 	elseif(iname == "Bridge1 Pos") then
 		if(value != Vector(0,0,0)) then
@@ -236,6 +252,12 @@ function ENT:TriggerInput(iname, value)
 	elseif(iname == "Bridge2 Angle") then
 		self.Bridge2Ang = value
 	elseif(iname == "Reset") then
+		if(value >= 1) then
+			self.Reset = 1
+		else
+			self.Reset = 0
+		end
+
 		self:ResetBridge()
 	elseif(iname == "Color") then
 		self.BridgeColor = value
