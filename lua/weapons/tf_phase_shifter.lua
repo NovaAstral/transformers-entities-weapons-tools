@@ -36,6 +36,34 @@ function SWEP:Initialize()
 	self.Phase = false
 end
 
+function SWEP:Phase(ply,on,playsound)
+	if(on == true) then
+		if(playsound == true) then
+			ply:EmitSound("tftools/phase_shift.wav",100,100)
+		end
+
+		timer.Create("TFPhase_wait",1.2,1,function()
+			ply:SetCustomCollisionCheck(true)
+
+			hook.Add("ShouldCollide","TFPhaseHook",function(ent1,ent2)
+				if(ent1 == ply or ent2 == ply) then
+					return false
+				end
+			end)
+		end)
+	else
+		if(timer.Exists("TFPhase_wait")) then
+			timer.Remove("TFPhase_wait")
+		end
+
+		ply:StopSound("tftools/phase_shift.wav")
+		ply:EmitSound("tftools/phase_shift_deactivate.wav")
+
+		ply:SetCustomCollisionCheck(false)
+		hook.Remove("ShouldCollide","TFPhaseHook")
+	end
+end
+
 if SERVER then
 	function SWEP:PrimaryAttack()
 		local ply = self:GetOwner()
@@ -57,34 +85,6 @@ if SERVER then
 			self.Phase = false
 
 			SWEP:Phase(ply,false,false)
-		end
-	end
-
-	function SWEP:Phase(ply,on,playsound)
-		if(on == true) then
-			if(playsound == true) then
-				ply:EmitSound("tftools/phase_shift.wav",100,100)
-			end
-
-			timer.Create("TFPhase_wait",1.2,1,function()
-				ply:SetCustomCollisionCheck(true)
-
-				hook.Add("ShouldCollide","TFPhaseHook",function(ent1,ent2)
-					if(ent1 == ply or ent2 == ply) then
-						return false
-					end
-				end)
-			end)
-		else
-			if(timer.Exists("TFPhase_wait")) then
-				timer.Remove("TFPhase_wait")
-			end
-
-			ply:StopSound("tftools/phase_shift.wav")
-			ply:EmitSound("tftools/phase_shift_deactivate.wav")
-
-			ply:SetCustomCollisionCheck(false)
-			hook.Remove("ShouldCollide","TFPhaseHook")
 		end
 	end
 

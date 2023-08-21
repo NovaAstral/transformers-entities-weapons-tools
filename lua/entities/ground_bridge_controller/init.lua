@@ -125,7 +125,6 @@ function ENT:OpenGroundBridge()
 	timer.Create("BridgeTP"..self:EntIndex(),0.1,0,function()
 		if(IsValid(self.Bridge1)) then
 			for k, v in ipairs(ents.FindInSphere(self.Bridge1:GetPos(),self.Size*100)) do
-				print(v:GetCreator())
 				if(v:GetPhysicsObject():IsValid() and v:GetPhysicsObject():IsMotionEnabled() and v:GetClass() != "ground_bridge_portal" and v:GetNWBool("TFNoBridging",false) == false and IsValid(v:GetCreator())) then
 					v:SetPos(self.Bridge2:LocalToWorld(Vector(0,math.random(-self.Size*50,self.Size*50),math.random(self.Size*250,self.Size*400))))
 					v:SetVelocity(-v:GetVelocity()) --stop the player so they dont go back through the bridge
