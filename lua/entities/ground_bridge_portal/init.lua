@@ -76,6 +76,7 @@ function ENT:Initialize()
 end
 
 function ENT:OnRemove()
+	timer.Remove("BridgeIdleSound")
 	self:StopSound("ambience/dronemachine3.wav")
 	self.backprop:Remove()
 end
