@@ -125,15 +125,17 @@ function ENT:OpenGroundBridge()
 	timer.Create("BridgeTP"..self:EntIndex(),0.1,0,function()
 		if(IsValid(self.Bridge1)) then
 			for k, v in ipairs(ents.FindInSphere(self.Bridge1:GetPos(),self.Size*100)) do
-				if(v:GetPhysicsObject():IsValid() and v:GetPhysicsObject():IsMotionEnabled() and v:GetClass() != "ground_bridge_portal" and v:GetNWBool("TFNoBridging",false) == false and IsValid(v:GetCreator())) then
-					v:SetPos(self.Bridge2:LocalToWorld(Vector(0,math.random(-self.Size*50,self.Size*50),math.random(self.Size*250,self.Size*400))))
-					v:SetVelocity(-v:GetVelocity()) --stop the player so they dont go back through the bridge
+				if(v:GetPhysicsObject():IsValid() and v:GetPhysicsObject():IsMotionEnabled() and v:GetClass() != "ground_bridge_portal" and v:GetNWBool("TFNoBridging",false) == false) then
+					if(IsValid(v:GetCreator()) or v:IsPlayer() or IsValid(v:GetOwner())) then
+						v:SetPos(self.Bridge2:LocalToWorld(Vector(0,math.random(-self.Size*50,self.Size*50),math.random(self.Size*250,self.Size*400))))
+						v:SetVelocity(-v:GetVelocity()) --stop the player so they dont go back through the bridge
 
-					self.Bridge1:EmitSound("ground_bridge/ground_bridge_teleport.wav")
-					self.Bridge2:EmitSound("ground_bridge/ground_bridge_teleport.wav")
+						self.Bridge1:EmitSound("ground_bridge/ground_bridge_teleport.wav")
+						self.Bridge2:EmitSound("ground_bridge/ground_bridge_teleport.wav")
 
-					if(v:IsPlayer()) then --jank way to get the player to face out of the exit bridge
-						v:SetEyeAngles((self.Bridge2:LocalToWorld(Vector(0,45,300)) - v:GetShootPos()):Angle())
+						if(v:IsPlayer()) then --jank way to get the player to face out of the exit bridge
+							v:SetEyeAngles((self.Bridge1:LocalToWorld(Vector(0,90,300)) - v:GetShootPos()):Angle())
+						end
 					end
 				end
 			end
@@ -141,15 +143,17 @@ function ENT:OpenGroundBridge()
 
 		if(IsValid(self.Bridge2)) then
 			for k, v in ipairs(ents.FindInSphere(self.Bridge2:GetPos(),self.Size*100)) do
-				if(v:GetPhysicsObject():IsValid() and v:GetPhysicsObject():IsMotionEnabled() and v:GetClass() != "ground_bridge_portal" and v:GetNWBool("TFNoBridging",false) == false and IsValid(v:GetCreator())) then
-					v:SetPos(self.Bridge1:LocalToWorld(Vector(0,math.random(-self.Size*50,self.Size*50),math.random(self.Size*250,self.Size*400))))
-					v:SetVelocity(-v:GetVelocity()) --stop the player so they dont go back through the bridge
+				if(v:GetPhysicsObject():IsValid() and v:GetPhysicsObject():IsMotionEnabled() and v:GetClass() != "ground_bridge_portal" and v:GetNWBool("TFNoBridging",false) == false) then
+					if(IsValid(v:GetCreator()) or v:IsPlayer()) then
+						v:SetPos(self.Bridge1:LocalToWorld(Vector(0,math.random(-self.Size*50,self.Size*50),math.random(self.Size*250,self.Size*400))))
+						v:SetVelocity(-v:GetVelocity()) --stop the player so they dont go back through the bridge
 
-					self.Bridge1:EmitSound("ground_bridge/ground_bridge_teleport.wav")
-					self.Bridge2:EmitSound("ground_bridge/ground_bridge_teleport.wav")
+						self.Bridge1:EmitSound("ground_bridge/ground_bridge_teleport.wav")
+						self.Bridge2:EmitSound("ground_bridge/ground_bridge_teleport.wav")
 
-					if(v:IsPlayer()) then --jank way to get the player to face out of the exit bridge
-						v:SetEyeAngles((self.Bridge1:LocalToWorld(Vector(0,45,300)) - v:GetShootPos()):Angle())
+						if(v:IsPlayer()) then --jank way to get the player to face out of the exit bridge
+							v:SetEyeAngles((self.Bridge2:LocalToWorld(Vector(0,90,300)) - v:GetShootPos()):Angle())
+						end
 					end
 				end
 			end
