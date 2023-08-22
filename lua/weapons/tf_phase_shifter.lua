@@ -36,6 +36,16 @@ function SWEP:Initialize()
 	self.Phase = false
 end
 
+function SWEP:Deploy()
+	hook.Add("ShouldCollide","TFPhaseHook",function(ent1,ent2)
+		if(self.Phase == true) then
+			if(ent1 == self:GetOwner() or ent2 == self:GetOwner()) then
+				return false
+			end
+		end
+	end)
+end
+
 function SWEP:Phase(ply,on,playsound)
 	if(on == true) then
 		if(playsound == true) then
@@ -44,23 +54,18 @@ function SWEP:Phase(ply,on,playsound)
 
 		timer.Create("TFPhase_wait",1.2,1,function()
 			ply:SetCustomCollisionCheck(true)
-
-			hook.Add("ShouldCollide","TFPhaseHook",function(ent1,ent2)
-				if(ent1 == ply or ent2 == ply) then
-					return false
-				end
-			end)
+			ply:CollisionRulesChanged()
 		end)
 	else
 		if(timer.Exists("TFPhase_wait")) then
 			timer.Remove("TFPhase_wait")
 		end
 
+		ply:SetCustomCollisionCheck(false)
+		ply:CollisionRulesChanged()
+
 		ply:StopSound("tftools/phase_shift.wav")
 		ply:EmitSound("tftools/phase_shift_deactivate.wav")
-
-		ply:SetCustomCollisionCheck(false)
-		hook.Remove("ShouldCollide","TFPhaseHook")
 	end
 end
 
@@ -90,6 +95,7 @@ if SERVER then
 
 	function SWEP:OnRemove() -- When the player dies
 		Phase(self:GetOwner(),false,false)
+		hook.Remove("ShouldCollide","TFPhaseHook")
 	end
 end
 
