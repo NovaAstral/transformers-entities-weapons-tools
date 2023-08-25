@@ -44,7 +44,7 @@ if SERVER then
 
 		if(not IsValid(ply)) then return end
         if(not IsValid(self.BridgeController)) then 
-            self:EmitSound("buttons/button8.wav")
+            ply:EmitSound("buttons/button8.wav",60,100,0.2)
             return 
         end
 
@@ -58,9 +58,9 @@ if SERVER then
 
             self.BridgeController.Bridge1Ang = angp
 
-            self:EmitSound("buttons/button24.wav")
+            ply:EmitSound("buttons/button24.wav",60,100,0.2)
         else
-            self:EmitSound("buttons/button22.wav")
+            ply:EmitSound("buttons/button22.wav",60,100,0.2)
             self.BridgeController:OpenGroundBridge()
         end
 	end
@@ -74,7 +74,7 @@ if SERVER then
 
 		if(not IsValid(ply)) then return end
         if(not IsValid(self.BridgeController)) then 
-            self:EmitSound("buttons/button8.wav")
+            ply:EmitSound("buttons/button8.wav",60,100,0.2)
             return 
         end
 
@@ -88,9 +88,9 @@ if SERVER then
 
             self.BridgeController.Bridge2Ang = angp
 
-            self:EmitSound("buttons/button24.wav")
+            ply:EmitSound("buttons/button24.wav",60,100,0.2)
         else
-            self:EmitSound("buttons/button22.wav")
+            ply:EmitSound("buttons/button22.wav",60,100,0.2)
             self.BridgeController:CloseGroundBridge()
         end
 	end
@@ -110,12 +110,12 @@ if SERVER then
 
         if(tr.Entity:GetClass() == "ground_bridge_controller") then
             self.BridgeController = tr.Entity
-            self:EmitSound("buttons/blip1.wav")
+            ply:EmitSound("buttons/blip1.wav",60,100,0.2)
         elseif(IsValid(self.BridgeController)) then
             self.BridgeController:ResetBridge()
-            self:EmitSound("buttons/button9.wav")
+            ply:EmitSound("buttons/button9.wav",60,100,0.2)
         else
-            self:EmitSound("buttons/button8.wav")
+            ply:EmitSound("buttons/button8.wav",60,100,0.2)
         end
 	end
 end
