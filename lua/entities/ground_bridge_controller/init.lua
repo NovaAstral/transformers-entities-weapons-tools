@@ -271,6 +271,8 @@ function ENT:TriggerInput(iname, value)
 		self.BridgeColor = value
 	elseif(iname == "Size") then
 		self.Size = math.Clamp(value,0.1,2)
+	elseif(iname == "Distance") then
+		self.Dist = math.Clamp(value,0,32000)
 	end
 end
 
