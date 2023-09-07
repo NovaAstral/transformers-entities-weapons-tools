@@ -3,16 +3,12 @@ AddCSLuaFile("shared.lua")
 AddCSLuaFile()
 include('shared.lua')
 
-if(WireLib == nil) then return end
-
-ENT.WireDebugName = "Ground Bridge Portal"
-
 function ENT:SpawnFunction(ply, tr)
 	local ent = ents.Create("ground_bridge_portal")
 	ent:SetPos(tr.HitPos + Vector(0, 0, 20))
 	ent:SetVar("Owner",ply)
 	ent:Spawn()
-	return ent 
+	return ent
 end 
 
 function ENT:Initialize()
@@ -71,12 +67,14 @@ function ENT:Initialize()
 	self.Entity:SetNWBool("On",true)
 
 	timer.Create("BridgeIdleSound"..self:EntIndex(),1,1,function()
-		self.Entity:EmitSound("ambience/dronemachine3.wav",75,100,0.5)
+		if(IsValid(self.Entity)) then
+			self.Entity:EmitSound("ambient/levels/citadel/field_loop2.wav",75,100,0.5)
+		end
 	end)
 end
 
 function ENT:OnRemove()
 	timer.Remove("BridgeIdleSound")
-	self:StopSound("ambience/dronemachine3.wav")
+	self:StopSound("ambient/levels/citadel/field_loop2.wav")
 	self.backprop:Remove()
 end

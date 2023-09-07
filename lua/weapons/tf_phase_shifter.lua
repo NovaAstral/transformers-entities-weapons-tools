@@ -95,6 +95,7 @@ if SERVER then
 
 	function SWEP:OnRemove() -- When the player dies
 		Phase(self:GetOwner(),false,false)
+		self:GetOwner():StopSound("tftools/phase_shift.wav")
 		hook.Remove("ShouldCollide","TFPhaseHook")
 	end
 end

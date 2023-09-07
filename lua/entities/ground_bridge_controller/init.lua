@@ -2,10 +2,6 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include('shared.lua')
 
-if(WireLib == nil) then return end
-
-ENT.WireDebugName = "Ground Bridge Controller"
-
 function ENT:SpawnFunction(ply, tr)
 	local ent = ents.Create("ground_bridge_controller")
 	ent:SetPos(tr.HitPos + Vector(0, 0, 20))
@@ -15,9 +11,17 @@ function ENT:SpawnFunction(ply, tr)
 end 
 
 function ENT:Initialize()
-	if(!util.IsValidModel("models/props_random/whirlpool22_narrow.mdl")) then
+	if(!util.IsValidModel("models/props_random/whirlpool22_narrow.mdl")) then -- If Server is missing whirlpool adddon
 		self.Entity.Owner:SendLua("GAMEMODE:AddNotify(\"Missing Whirlpool Model! Check your chat!\", NOTIFY_ERROR, 8); surface.PlaySound( \"buttons/button2.wav\" )")
 		self.Entity.Owner:PrintMessage(HUD_PRINTTALK,"The Server is missing the Whirlpool addon, install it at https://steamcommunity.com/sharedfiles/filedetails/?id=1524799867")
+		self.Entity:Remove()
+
+		return
+	end
+
+	if(!util.IsValidModel("models/props_silo/desk_console2.mdl")) then -- If server is missing episode 2
+		self.Entity.Owner:SendLua("GAMEMODE:AddNotify(\"Missing Half Life 2: Episode 2!\", NOTIFY_ERROR, 8); surface.PlaySound( \"buttons/button2.wav\" )")
+		self.Entity.Owner:PrintMessage(HUD_PRINTTALK,"The Server is missing Half Life 2: Episode 2")
 		self.Entity:Remove()
 
 		return
@@ -61,9 +65,17 @@ function ENT:Initialize()
 	print("Owner:")
 	print(self.Entity.Owner)
 
-	self.Inputs = WireLib.CreateSpecialInputs(self.Entity,
-	{"Activate","Bridge1 Pos","Bridge1 Angle","Bridge2 Pos","Bridge2 Angle","Reset","Color","Size","Distance"},
-	{"NORMAL","VECTOR","ANGLE","VECTOR","ANGLE","NORMAL","VECTOR","NORMAL","NORMAL"})
+	if(WireLib != nil) then
+		self.WireDebugName = "Ground Bridge Controller"
+
+		self.Inputs = WireLib.CreateSpecialInputs(self.Entity,
+		{"Activate","Bridge1 Pos","Bridge1 Angle","Bridge2 Pos","Bridge2 Angle","Reset","Color","Size","Distance"},
+		{"NORMAL","VECTOR","ANGLE","VECTOR","ANGLE","NORMAL","VECTOR","NORMAL","NORMAL"})
+	end
+end
+
+function ENT:TransformOffset(v, a1, a2)
+	return (v:Dot(a1:Right()) * a2:Right() + v:Dot(a1:Up()) * (-a2:Up()) - v:Dot(a1:Forward()) * a2:Forward())
 end
 
 function ENT:OpenGroundBridge()
@@ -91,11 +103,11 @@ function ENT:OpenGroundBridge()
 
 	timer.Create("BridgeIdleSound"..self:EntIndex(),1,1,function()
 		if(IsValid(self.Bridge1)) then
-			self.Bridge1:EmitSound("ambience/dronemachine3.wav",75,100,0.5)
+			self.Bridge1:EmitSound("ambient/levels/citadel/field_loop2.wav",75,100,0.5)
 		end
 
 		if(IsValid(self.Bridge2)) then
-			self.Bridge2:EmitSound("ambience/dronemachine3.wav",75,100,0.5)
+			self.Bridge2:EmitSound("ambient/levels/citadel/field_loop2.wav",75,100,0.5)
 		end
 	end)
 
@@ -132,10 +144,6 @@ function ENT:OpenGroundBridge()
 
 						self.Bridge1:EmitSound("ground_bridge/ground_bridge_teleport.wav")
 						self.Bridge2:EmitSound("ground_bridge/ground_bridge_teleport.wav")
-
-						if(v:IsPlayer()) then --jank way to get the player to face out of the exit bridge
-							v:SetEyeAngles((self.Bridge1:LocalToWorld(Vector(0,90,300)) - v:GetShootPos()):Angle())
-						end
 					end
 				end
 			end
@@ -150,10 +158,6 @@ function ENT:OpenGroundBridge()
 
 						self.Bridge1:EmitSound("ground_bridge/ground_bridge_teleport.wav")
 						self.Bridge2:EmitSound("ground_bridge/ground_bridge_teleport.wav")
-
-						if(v:IsPlayer()) then --jank way to get the player to face out of the exit bridge
-							v:SetEyeAngles((self.Bridge2:LocalToWorld(Vector(0,90,300)) - v:GetShootPos()):Angle())
-						end
 					end
 				end
 			end
@@ -174,11 +178,11 @@ function ENT:CloseGroundBridge()
 		self.Bridge1.backprop:SetModelScale(0,0.3)
 		self.Bridge1:SetNWBool("On",false)
 
-		self.Bridge1:StopSound("ambience/dronemachine3.wav")
+		self.Bridge1:StopSound("ambient/levels/citadel/field_loop2.wav")
 
 		timer.Simple(2,function() --stop the sound twice incase someone turned it off before it was fully on
 			if(IsValid(self.Bridge1)) then
-				self.Bridge1:StopSound("ambience/dronemachine3.wav")
+				self.Bridge1:StopSound("ambient/levels/citadel/field_loop2.wav")
 			end
 		end)
 	end
@@ -189,11 +193,11 @@ function ENT:CloseGroundBridge()
 		self.Bridge2.backprop:SetModelScale(0,0.3)
 		self.Bridge2:SetNWBool("On",false)
 
-		self.Bridge2:StopSound("ambience/dronemachine3.wav")
+		self.Bridge2:StopSound("ambient/levels/citadel/field_loop2.wav")
 
 		timer.Simple(2,function() --stop the sound twice incase someone turned it off before it was fully on
 			if(IsValid(self.Bridge2)) then
-				self.Bridge2:StopSound("ambience/dronemachine3.wav")
+				self.Bridge2:StopSound("ambient/levels/citadel/field_loop2.wav")
 			end
 		end)
 	end
@@ -203,12 +207,12 @@ function ENT:ResetBridge()
 	self.BridgeActive = false
 	
 	if(IsValid(self.Bridge1)) then
-		self.Bridge1:StopSound("ambience/dronemachine3.wav")
+		self.Bridge1:StopSound("ambient/levels/citadel/field_loop2.wav")
 		self.Bridge1:Remove()
 	end
 	
 	if(IsValid(self.Bridge2)) then
-		self.Bridge2:StopSound("ambience/dronemachine3.wav")
+		self.Bridge2:StopSound("ambient/levels/citadel/field_loop2.wav")
 		self.Bridge2:Remove()
 	end
 end
