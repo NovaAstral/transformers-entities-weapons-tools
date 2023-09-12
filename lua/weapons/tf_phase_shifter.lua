@@ -94,7 +94,13 @@ if SERVER then
 	end
 
 	function SWEP:OnRemove() -- When the player dies
-		Phase(self:GetOwner(),false,false)
+		SWEP:Phase(self:GetOwner(),false,false)
+		self:GetOwner():StopSound("tftools/phase_shift.wav")
+		hook.Remove("ShouldCollide","TFPhaseHook")
+	end
+
+	function SWEP:OnDrop() -- if the player drops weapon
+		SWEP:Phase(self:GetOwner(),false,false)
 		self:GetOwner():StopSound("tftools/phase_shift.wav")
 		hook.Remove("ShouldCollide","TFPhaseHook")
 	end
