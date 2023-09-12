@@ -152,7 +152,7 @@ function ENT:OpenGroundBridge()
 		if(IsValid(self.Bridge2)) then
 			for k, v in ipairs(ents.FindInSphere(self.Bridge2:GetPos(),self.Size*100)) do
 				if(v:GetPhysicsObject():IsValid() and v:GetPhysicsObject():IsMotionEnabled() and v:GetClass() != "ground_bridge_portal" and v:GetNWBool("TFNoBridging",false) == false) then
-					if(IsValid(v:GetCreator()) or v:IsPlayer()) then
+					if(IsValid(v:GetCreator()) or v:IsPlayer() or IsValid(v:GetOwner())) then
 						v:SetPos(self.Bridge1:LocalToWorld(Vector(0,math.random(-self.Size*50,self.Size*50),math.random(self.Size*250,self.Size*400))))
 						v:SetVelocity(-v:GetVelocity()) --stop the player so they dont go back through the bridge
 

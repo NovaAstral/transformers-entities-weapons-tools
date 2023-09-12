@@ -52,7 +52,9 @@ function ENT:Initialize()
 	self.backprop:SetParent(self.Entity)
 
 	timer.Simple(0.1,function()
-		self.backprop:SetColor(self.Entity:GetColor())
+		if(IsValid(self.backprop)) then
+			self.backprop:SetColor(self.Entity:GetColor())
+		end
 	end)
 	
 
@@ -76,5 +78,8 @@ end
 function ENT:OnRemove()
 	timer.Remove("BridgeIdleSound")
 	self:StopSound("ambient/levels/citadel/field_loop2.wav")
-	self.backprop:Remove()
+
+	if(IsValid(self.backprop)) then
+		self.backprop:Remove()
+	end
 end
