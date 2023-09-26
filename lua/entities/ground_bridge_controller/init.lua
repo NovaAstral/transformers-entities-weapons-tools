@@ -8,7 +8,7 @@ function ENT:SpawnFunction(ply, tr)
 	ent:SetVar("Owner",ply)
 	ent:Spawn()
 	return ent 
-end 
+end
 
 function ENT:Initialize()
 	if(!util.IsValidModel("models/props_random/whirlpool22_narrow.mdl")) then -- If Server is missing whirlpool adddon
@@ -61,9 +61,6 @@ function ENT:Initialize()
 		phys:EnableGravity(true)
 		phys:Wake()
 	end
-
-	print("Owner:")
-	print(self.Entity.Owner)
 
 	if(WireLib != nil) then
 		self.WireDebugName = "Ground Bridge Controller"
