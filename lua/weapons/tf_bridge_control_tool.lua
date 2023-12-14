@@ -1,4 +1,4 @@
-local SWEP = {Primary = {}, Secondary = {}} -- I don't know what this does
+local SWEP = {Primary = {}, Secondary = {}}
 SWEP.Author = "Nova Astral"
 SWEP.PrintName = "Bridge Controller"
 SWEP.Purpose = "Controlling the Ground Bridge"
