@@ -144,6 +144,7 @@ if(CLIENT)then
             self:drawShadowedText("Controller",128,145,"TFBridgeController")
         cam.End2D()
 
+        render.PopRenderTarget()
         render.PushRenderTarget(oldRT,0,0,ScrW(),ScrH())
     end
 
