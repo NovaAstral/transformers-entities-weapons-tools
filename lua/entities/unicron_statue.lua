@@ -69,7 +69,7 @@ function ENT:Sacrificed(victim,inflictor,attacker)
                 randextrare = math.random(1,100)
 
                 if(randextrare == 1) then --kill the unlucky fucker
-                    local direction = (v:GetPos() - self.Entity:GetPos()):GetNormalized()
+                    local direction = (v:GetPos()+Vector(0,0,25) - self.Entity:GetPos()):GetNormalized()
                     local GibEnt = ents.Create("prop_physics")
 
                     GibEnt:SetModel("models/cybertron/energon/energon_cube_gib_3.mdl")
@@ -87,7 +87,7 @@ function ENT:Sacrificed(victim,inflictor,attacker)
                     end
 
                     GibEnt:SetCollisionGroup(COLLISION_GROUP_INTERACTIVE)
-                    GibEnt:SetPos(self.Entity:GetPos())
+                    GibEnt:SetPos(self.Entity:GetPos()+Vector(0,0,25))
 
                     if(IsValid(Phys)) then
                         Phys:SetVelocity(direction * 5000)
