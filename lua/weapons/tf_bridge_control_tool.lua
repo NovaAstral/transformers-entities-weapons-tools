@@ -27,24 +27,24 @@ function SWEP:ShouldDropOnDie() return false end
 
 function SWEP:Initialize()
     if(self.SetHoldType) then
-		self:SetHoldType("pistol")
-	end
+        self:SetHoldType("pistol")
+    end
 
-	self:DrawShadow(false)
+    self:DrawShadow(false)
 
     self.BridgeController = nil
     self.ReloadDelay = CurTime()+1
 end
 
 if SERVER then
-	function SWEP:PrimaryAttack()
+    function SWEP:PrimaryAttack()
         self:SetNextPrimaryFire(CurTime()+1)
         self:SetNextSecondaryFire(CurTime()+1)
         self.ReloadDelay = CurTime()+1
 
-		local ply = self:GetOwner()
+        local ply = self:GetOwner()
 
-		if(not IsValid(ply)) then return end
+        if(not IsValid(ply)) then return end
         if(not IsValid(self.BridgeController)) then 
             ply:EmitSound("buttons/button8.wav",60,100,0.2)
             return 
@@ -65,16 +65,16 @@ if SERVER then
             ply:EmitSound("buttons/button22.wav",60,100,0.2)
             self.BridgeController:OpenGroundBridge()
         end
-	end
+    end
 
-	function SWEP:SecondaryAttack()
+    function SWEP:SecondaryAttack()
         self:SetNextSecondaryFire(CurTime()+1)
         self:SetNextPrimaryFire(CurTime()+1)
         self.ReloadDelay = CurTime()+1
         
-		local ply = self:GetOwner()
+        local ply = self:GetOwner()
 
-		if(not IsValid(ply)) then return end
+        if(not IsValid(ply)) then return end
         if(not IsValid(self.BridgeController)) then 
             ply:EmitSound("buttons/button8.wav",60,100,0.2)
             return 
@@ -95,7 +95,7 @@ if SERVER then
             ply:EmitSound("buttons/button22.wav",60,100,0.2)
             self.BridgeController:CloseGroundBridge()
         end
-	end
+    end
 
     function SWEP:Reload()
         if(self.ReloadDelay >= CurTime()) then
@@ -104,11 +104,11 @@ if SERVER then
             self.ReloadDelay = CurTime()+1
         end
         
-		local ply = self:GetOwner()
+        local ply = self:GetOwner()
 
-		if(not IsValid(ply)) then return end
+        if(not IsValid(ply)) then return end
 
-		local tr = ply:GetEyeTraceNoCursor()
+        local tr = ply:GetEyeTraceNoCursor()
 
         if(tr.Entity:GetClass() == "ground_bridge_controller") then
             self.BridgeController = tr.Entity
@@ -119,11 +119,11 @@ if SERVER then
         else
             ply:EmitSound("buttons/button8.wav",60,100,0.2)
         end
-	end
+    end
 end
 
 if(CLIENT)then
-	local matScreen = Material("models/weapons/v_toolgun/screen")
+    local matScreen = Material("models/weapons/v_toolgun/screen")
     local rtTexture = GetRenderTarget("GModToolgunScreen",256,256)
 
     surface.CreateFont("TFBridgeController",{
@@ -137,7 +137,8 @@ if(CLIENT)then
 
         local oldRT = render.GetRenderTarget()
 
-        render.PushRenderTarget(rtTexture,0,0,256,256)
+        render.SetViewPort(0,0,ScrW(),ScrH())
+        render.PushRenderTarget(rtTexture)
 
         cam.Start2D()
             surface.SetDrawColor(Color(100,100,100))
@@ -146,8 +147,9 @@ if(CLIENT)then
             self:drawShadowedText("Controller",128,145,"TFBridgeController")
         cam.End2D()
 
+        render.SetRenderTarget(oldRT)
+        render.SetViewPort(0,0,ScrW(),ScrH())
         render.PopRenderTarget()
-        render.PushRenderTarget(oldRT,0,0,ScrW(),ScrH())
     end
 
     function SWEP:drawShadowedText(text, x, y, font)

@@ -54,7 +54,7 @@ function ENT:Initialize()
 	end
 
 	if(WireLib != nil) then
-		self.WireDebugName = "Ground Bridge Controller"
+		self.WireDebugName = "Energon Extractor"
 
 		self.Inputs = WireLib.CreateSpecialInputs(self.Entity,{"Activate"},{"NORMAL"})
 	end
@@ -102,10 +102,6 @@ function ENT:Think()
 
 			self.Entity:SetNWInt("energon",self.Energon)
 			self.Entity:SetNWInt("crystal_energon",EnCrys.Energon)
-
-			Col = EnCrys:GetColor().r - 4
-
-			EnCrys:SetColor(Color(Col,Col,Col))
 		else
 			self.Active = 0
 		end

@@ -13,8 +13,8 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = true
 
 if CLIENT then
-    language.Add( "Cleanup_unicron_statue", "Sacrificial Unicron Statue")
-    language.Add( "Cleaned_unicron_statue", "Sacrificial Unicron Statue")
+    language.Add( "Cleanup_unicron_statue", "Cleanup Sacrificial Unicron Statue")
+    language.Add( "Cleaned_unicron_statue", "Cleaned Sacrificial Unicron Statue")
 
     function ENT:Draw()
         self:DrawEntityOutline( 0.0 )
@@ -53,12 +53,15 @@ function ENT:Initialize()
 		phys:EnableMotion(false)
 	end
 
-    hook.Add("PlayerDeath","Unicron_Death_Check",function(victim,inflictor,attacker)
-        self:Sacrificed(victim,inflictor,attacker)
+    timer.Simple(1,function()
+        hook.Add("PlayerDeath","Unicron_Death_Check"..self.Entity:EntIndex(),function(victim,inflictor,attacker)
+            self:Sacrificed(victim,inflictor,attacker)
+        end)
     end)
 end
 
 function ENT:Sacrificed(victim,inflictor,attacker)
+    print("sac")
     if(victim:GetPos():Distance(self.Entity:GetPos()) <= 500) then
         bufftar = ents.FindInSphere(self.Entity:GetPos(),500)
 
@@ -104,7 +107,7 @@ function ENT:Sacrificed(victim,inflictor,attacker)
                     if(v:IsPlayer() and v:Alive()) then
                         v:GodEnable()
 
-                        timer.Simple(10,function()
+                        timer.Simple(300,function()
                             if(v:HasGodMode()) then
                                 v:GodDisable()
 
@@ -119,23 +122,26 @@ function ENT:Sacrificed(victim,inflictor,attacker)
                     v:SetHealth(hp)
                     v:ChatPrint("You have gained the boon of "..hp.." health!")
                 elseif(randnorm == 2) then
-                    v:ChatPrint("You have gained the boon of")
+                    v:ChatPrint("You have gained the boon of WIP")
                 elseif(randnorm == 3) then
-                    v:ChatPrint("You have gained the boon of")
+                    v:ChatPrint("You have gained the boon of WIP")
                 elseif(randnorm == 4) then
-                    v:ChatPrint("You have gained the boon of")
+                    v:ChatPrint("You have gained the boon of WIP")
                 elseif(randnorm == 5) then
-                    v:ChatPrint("You have gained the boon of")
+                    v:ChatPrint("You have gained the boon of WIP")
                 elseif(randnorm == 6) then
-
+                    v:ChatPrint("You have gained the boon of WIP")
                 end
+                --battery shield
+                --better knife maybe
+                --money
             end
         end
     end
 end
 
+function ENT:OnRemove()
+	hook.Remove("PlayerDeath","Unicron_Death_Check"..self.Entity:EntIndex())
 end
-/*
--battery shield
--better knife maybe
--money
+
+end

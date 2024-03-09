@@ -68,4 +68,9 @@ function ENT:SetEnergon(num)
 	self.Entity:SetNWInt("energon",num)
 end
 
+function ENT:Think()
+	Col = self:GetColor().r - 4
+	self:SetColor(Color(Col,Col,Col))
+end
+
 end
