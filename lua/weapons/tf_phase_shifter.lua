@@ -51,7 +51,7 @@ end
 function SWEP:Phase(ply,on,playsound)
 	if(on == true) then
 		if(playsound == true) then
-			ply:EmitSound("tftools/phase_shift.wav",100,100)
+			ply:EmitSound("tftools/phase_shift.wav",75,100,0.2)
 		end
 
 		timer.Create("TFPhase_wait",1.2,1,function()

@@ -124,6 +124,12 @@ function ENT:Initialize()
 	end)
 end
 
+function ENT:Think()
+	if(self.backprop:GetColor() ~= self:GetColor()) then
+		self.backprop:SetColor(self:GetColor())
+	end
+end
+
 function ENT:OnRemove()
 	timer.Remove("BridgeIdleSound")
 	self:StopSound("ambient/levels/citadel/field_loop2.wav")
