@@ -79,7 +79,7 @@ function ENT:TurnOn()
 
 	EnCrys = tr.Entity
 
-	if(IsValid(EnCrys) and EnCrys:GetClass() == "energon_crystal" and self.Active == 0) then
+	if(IsValid(EnCrys) and EnCrys:GetClass() == "raw_energon" and self.Active == 0) then
 		if(EnCrys.Energon > 0 and self.Energon < 100) then
 			self.Active = 1
 		end

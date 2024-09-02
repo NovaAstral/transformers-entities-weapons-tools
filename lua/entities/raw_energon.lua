@@ -25,7 +25,7 @@ if CLIENT then
 else -- server
 
 function ENT:SpawnFunction(ply, tr)
-	local ent = ents.Create("energon_crystal")
+	local ent = ents.Create("raw_energon")
 	ent:SetPos(tr.HitPos)
 	ent:SetVar("Owner",ply)
 	ent:Spawn()

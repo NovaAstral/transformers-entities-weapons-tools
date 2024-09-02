@@ -43,23 +43,24 @@ function ENT:Initialize()
 		return
 	end
 
-	if(!util.IsValidModel("models/props_silo/desk_console2.mdl")) then -- If server is missing episode 2
-		self.Entity.Owner:SendLua("GAMEMODE:AddNotify(\"Missing Half Life 2: Episode 2!\", NOTIFY_ERROR, 8); surface.PlaySound( \"buttons/button2.wav\" )")
-		self.Entity.Owner:PrintMessage(HUD_PRINTTALK,"The Server is missing Half Life 2: Episode 2")
-		self.Entity:Remove()
+	if(!util.IsValidModel("models/props_silo/desk_console2.mdl")) then -- If server is missing episode 2, use backup model
+		self.Entity.Owner:SendLua("GAMEMODE:AddNotify(\"Missing Half Life 2: Episode 2! Using backup model.\", NOTIFY_ERROR, 8); surface.PlaySound( \"buttons/button2.wav\" )")
+		self.Entity.Owner:PrintMessage(HUD_PRINTTALK,"The Server is missing Half Life 2: Episode 2, Using backup model.")
 
-		return
+		util.PrecacheModel("models/props_combine/combine_interface001.mdl")
+		self.Entity:SetModel("models/props_combine/combine_interface001.mdl")
+	else --server has ep2
+		util.PrecacheModel("models/props_silo/desk_console2.mdl")
+		self.Entity:SetModel("models/props_silo/desk_console2.mdl")
 	end
 
-	util.PrecacheModel("models/props_silo/desk_console2.mdl")
+	--make this change to the combine console if ep2 doesnt exist!
 
 	util.PrecacheSound("ground_bridge/ground_bridge_open.wav")
 	util.PrecacheSound("ground_bridge/ground_bridge_close.wav")
 	util.PrecacheSound("ground_bridge/ground_bridge_lever.wav")
 	util.PrecacheSound("ground_bridge/ground_bridge_teleport.wav")
 
-	self.Entity:SetModel("models/props_silo/desk_console2.mdl")
-	
 	self.Entity:PhysicsInit(SOLID_VPHYSICS)
 	self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 	self.Entity:SetSolid(SOLID_VPHYSICS)
