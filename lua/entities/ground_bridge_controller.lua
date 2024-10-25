@@ -54,17 +54,18 @@ function ENT:Initialize()
 		self.Entity:SetModel("models/props_silo/desk_console2.mdl")
 	end
 
-	--make this change to the combine console if ep2 doesnt exist!
-
 	util.PrecacheSound("ground_bridge/ground_bridge_open.wav")
+	util.PrecacheSound("ground_bridge/ground_bridge_open2.wav")
 	util.PrecacheSound("ground_bridge/ground_bridge_close.wav")
 	util.PrecacheSound("ground_bridge/ground_bridge_lever.wav")
 	util.PrecacheSound("ground_bridge/ground_bridge_teleport.wav")
 
+	self.OpenSounds = {"ground_bridge/ground_bridge_open.wav","ground_bridge/ground_bridge_open2.wav"}
+
 	self.Entity:PhysicsInit(SOLID_VPHYSICS)
 	self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 	self.Entity:SetSolid(SOLID_VPHYSICS)
-		
+	
 	self.Entity:DrawShadow(false)
 		
 	local phys = self.Entity:GetPhysicsObject()
@@ -152,8 +153,8 @@ function ENT:OpenGroundBridge()
 		self.Bridge1.backprop:SetModelScale(-self.Size,0.3)
 		self.Bridge2.backprop:SetModelScale(-self.Size,0.3)
 
-		self.Bridge1:EmitSound("ground_bridge/ground_bridge_open.wav")
-		self.Bridge2:EmitSound("ground_bridge/ground_bridge_open.wav")
+		self.Bridge1:EmitSound(self.OpenSounds[math.random(1,2)])
+		self.Bridge2:EmitSound(self.OpenSounds[math.random(1,2)])
 	end)
 
 	timer.Create("BridgeTP"..self:EntIndex(),0.1,0,function()
@@ -164,8 +165,11 @@ function ENT:OpenGroundBridge()
 						v:SetPos(self.Bridge2:LocalToWorld(Vector(0,math.random(-self.Size*50,self.Size*50),math.random(self.Size*250,self.Size*400)))) --set random pos so players dont get stuck inside eachother hopefully
 						v:SetVelocity(-v:GetVelocity()) --stop the player so they dont go back through the bridge
 
-						self.Bridge1:EmitSound("ground_bridge/ground_bridge_teleport.wav")
-						self.Bridge2:EmitSound("ground_bridge/ground_bridge_teleport.wav")
+						timer.Simple(0.1,function() --delayed so the player teleporting can hear it
+							self.Bridge1:EmitSound("ground_bridge/ground_bridge_teleport.wav")
+							self.Bridge2:EmitSound("ground_bridge/ground_bridge_teleport.wav")
+						end)
+						
 					end
 				end
 			end
@@ -175,11 +179,13 @@ function ENT:OpenGroundBridge()
 			for k, v in ipairs(ents.FindInSphere(self.Bridge2:GetPos(),self.Size*100)) do
 				if(v:GetPhysicsObject():IsValid() and v:GetPhysicsObject():IsMotionEnabled() and v:GetClass() != "ground_bridge_portal" and v:GetNWBool("TFNoBridging",false) == false) then
 					if(IsValid(v:GetCreator()) or v:IsPlayer() or IsValid(v:GetOwner())) then
-						v:SetPos(self.Bridge1:LocalToWorld(Vector(0,math.random(-self.Size*50,self.Size*50),math.random(self.Size*250,self.Size*400)))) --set random pos so players dont get stuck inside eachother hopefully
-						v:SetVelocity(-v:GetVelocity()) --stop the player so they dont go back through the bridge
+						v:SetPos(self.Bridge1:LocalToWorld(Vector(0,math.random(-self.Size*50,self.Size*50),math.random(self.Size*250,self.Size*400))))
+						v:SetVelocity(-v:GetVelocity())
 
-						self.Bridge1:EmitSound("ground_bridge/ground_bridge_teleport.wav")
-						self.Bridge2:EmitSound("ground_bridge/ground_bridge_teleport.wav")
+						timer.Simple(0.1,function()
+							self.Bridge1:EmitSound("ground_bridge/ground_bridge_teleport.wav")
+							self.Bridge2:EmitSound("ground_bridge/ground_bridge_teleport.wav")
+						end)
 					end
 				end
 			end
