@@ -9,19 +9,12 @@ ENT.Contact	= "https://github.com/NovaAstral"
 ENT.Purpose	= "its for extracting"
 ENT.Instructions = "just use it"
 
-ENT.Spawnable = true
-ENT.AdminSpawnable = true
+ENT.Spawnable = false
 
 if CLIENT then
-    language.Add( "Cleanup_energon_extractor", "Energon Extractor")
-    language.Add( "Cleaned_energon_extractor", "Energon Extractor")
-
     function ENT:Draw()
-        self:DrawEntityOutline( 0.0 )
         self.Entity:DrawModel()
     end
-
-    function ENT:DrawEntityOutline() return end
 else -- server
 
 function ENT:SpawnFunction(ply, tr)

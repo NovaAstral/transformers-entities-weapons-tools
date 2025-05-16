@@ -9,19 +9,12 @@ ENT.Contact	= "https://github.com/NovaAstral"
 ENT.Purpose	= "its for being mined"
 ENT.Instructions = "just mine it"
 
-ENT.Spawnable = true
-ENT.AdminSpawnable = true
+ENT.Spawnable = false
 
 if CLIENT then
-    language.Add( "Cleanup_energon_crystal", "Cleanup Energon Ore")
-    language.Add( "Cleaned_energon_crystal", "Cleaned Energon Ore")
-
     function ENT:Draw()
-        self:DrawEntityOutline( 0.0 )
         self.Entity:DrawModel()
     end
-
-    function ENT:DrawEntityOutline() return end
 else -- server
 
 function ENT:SpawnFunction(ply, tr)

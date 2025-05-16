@@ -10,18 +10,11 @@ ENT.Purpose	= "its for extracting life energy"
 ENT.Instructions = "Kill someone near it"
 
 ENT.Spawnable = true
-ENT.AdminSpawnable = true
 
 if CLIENT then
-    language.Add( "Cleanup_unicron_statue", "Cleanup Sacrificial Unicron Statue")
-    language.Add( "Cleaned_unicron_statue", "Cleaned Sacrificial Unicron Statue")
-
     function ENT:Draw()
-        self:DrawEntityOutline( 0.0 )
         self.Entity:DrawModel()
     end
-
-    function ENT:DrawEntityOutline() return end
 else -- server
 
 function ENT:SpawnFunction(ply, tr)
@@ -54,9 +47,11 @@ function ENT:Initialize()
 	end
 
     timer.Simple(1,function()
-        hook.Add("PlayerDeath","Unicron_Death_Check"..self.Entity:EntIndex(),function(victim,inflictor,attacker)
-            self:Sacrificed(victim,inflictor,attacker)
-        end)
+        if(IsValid(self)) then
+            hook.Add("PlayerDeath","Unicron_Death_Check"..self.Entity:EntIndex(),function(victim,inflictor,attacker)
+                self:Sacrificed(victim,inflictor,attacker)
+            end)
+        end
     end)
 end
 

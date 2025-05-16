@@ -52,18 +52,21 @@ if SERVER then
 
         if(ply:KeyDown(IN_WALK)) then
             local tr = ply:GetEyeTraceNoCursor()
-
-            self.BridgeController.Bridge1Pos = tr.HitPos + tr.HitNormal * self.BridgeController.Dist
-
             local ang = Vector(tr.HitPos - ply:GetPos()):Angle()
             local angp = Angle(-90,ang.y,ang.z)
 
-            self.BridgeController.Bridge1Ang = angp
+            if(self.BridgeController:GetClass() == "ground_bridge_frame") then --force bridge 2 if its a ground bridge
+                self.BridgeController.Bridge2Pos = tr.HitPos + tr.HitNormal * self.BridgeController.Dist
+                self.BridgeController.Bridge2Ang = angp
+            else
+                self.BridgeController.Bridge1Pos = tr.HitPos + tr.HitNormal * self.BridgeController.Dist
+                self.BridgeController.Bridge1Ang = angp
+            end
 
             ply:EmitSound("buttons/button24.wav",60,100,0.2)
         else
             ply:EmitSound("buttons/button22.wav",60,100,0.2)
-            self.BridgeController:OpenGroundBridge()
+            self.BridgeController:OpenBridge()
         end
     end
 
@@ -93,7 +96,7 @@ if SERVER then
             ply:EmitSound("buttons/button24.wav",60,100,0.2)
         else
             ply:EmitSound("buttons/button22.wav",60,100,0.2)
-            self.BridgeController:CloseGroundBridge()
+            self.BridgeController:CloseBridge()
         end
     end
 
@@ -110,7 +113,7 @@ if SERVER then
 
         local tr = ply:GetEyeTraceNoCursor()
 
-        if(tr.Entity:GetClass() == "ground_bridge_controller") then
+        if(tr.Entity:GetClass() == "ground_bridge_frame" or tr.Entity:GetClass() == "space_bridge_controller") then
             self.BridgeController = tr.Entity
             ply:EmitSound("buttons/blip1.wav",60,100,0.2)
         elseif(IsValid(self.BridgeController)) then
