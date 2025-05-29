@@ -65,8 +65,12 @@ if SERVER then
 
             ply:EmitSound("buttons/button24.wav",60,100,0.2)
         else
-            ply:EmitSound("buttons/button22.wav",60,100,0.2)
-            self.BridgeController:OpenBridge()
+            if(not util.IsInWorld(self.BridgeController.Bridge1Pos) or not util.IsInWorld(self.BridgeController.Bridge2Pos)) then
+                ply:EmitSound("buttons/button2.wav",40,100,0.5)
+            else
+                ply:EmitSound("buttons/button22.wav",60,100,0.2)
+                self.BridgeController:OpenBridge()
+            end
         end
     end
 

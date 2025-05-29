@@ -99,6 +99,11 @@ end
 function ENT:OpenBridge()
 	if(self.BridgeActive == true) then return end
 
+	if(not util.IsInWorld(self.Bridge1Pos) or not util.IsInWorld(self.Bridge2Pos)) then
+		self:EmitSound("buttons/button2.wav",75,100,0.5)
+		return
+	end
+
 	self.BridgeActive = true
 
 	if(!IsValid(self.Bridge1)) then

@@ -69,6 +69,8 @@ function ENT:Initialize()
 	self.Dist = 100
 	self.Reset = 0
 
+	self.MaxRange = 8000 --max distance the exit portal can be from the frame
+
 	self.BridgeColor = Vector(255,255,255)
 		
 	if(phys:IsValid()) then
@@ -89,19 +91,19 @@ end
 function ENT:OpenBridge()
 	if(self.BridgeActive == true) then return end
 
-	if(self.Bridge2Pos:Distance(self.Entity:GetPos())) > 8000 then
+	if(self.Bridge2Pos:Distance(self.Entity:GetPos())) > self.MaxRange then
 		self:EmitSound("buttons/button18.wav",75,100,0.5)
-		/*
-		--make this clamp the distance so the portal still opens but stays within 8000u of the frame
 		
 		local BridgePos = self.Bridge2Pos	
-		local x = math.Clamp(BridgePos.x,0,8000)
-		local y = math.Clamp(BridgePos.y,0,8000)
-		local z = math.Clamp(BridgePos.z,0,8000)
+		local x = math.Clamp(BridgePos.x,self:GetPos().x - self.MaxRange,self:GetPos().x + self.MaxRange)
+		local y = math.Clamp(BridgePos.y,self:GetPos().y - self.MaxRange,self:GetPos().y + self.MaxRange)
+		local z = math.Clamp(BridgePos.z,self:GetPos().z - self.MaxRange,self:GetPos().z + self.MaxRange)
 		self.Bridge2Pos = Vector(x,y,z)
+	end
 
-		--make it check for if its in the world or not, so if its outside the world, like in a wall, it doesnt open
-		*/
+	if(not util.IsInWorld(self.Bridge2Pos)) then
+		self:EmitSound("buttons/button2.wav",75,100,0.5)
+		
 		return
 	end
 
@@ -263,9 +265,7 @@ function ENT:WireTriggerBridge(value)
 			if(self.Bridge1Pos == Vector(0,0,0) or self.Bridge2Pos == Vector(0,0,0)) then
 				self.Entity:EmitSound("buttons/button2.wav",100,100,1,CHAN_AUTO,0,0)
 			else
-				if(BridgePos:Distance(self.Entity:GetPos())) > 8000 then
-					self:EmitSound("buttons/button18.wav",75,100,0.5)
-				else
+				if(Bridge2Pos:Distance(self.Entity:GetPos())) > self.MaxRange then
 					self:OpenBridge()
 				end
 			end
