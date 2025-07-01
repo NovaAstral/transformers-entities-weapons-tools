@@ -17,7 +17,7 @@ end
 
 local disablebridge = ulx.command("Transformers","ulx disablebridge",ulx.disablebridging,{"!nobridge","!disablebridge"})
 disablebridge:addParam{type=ULib.cmds.PlayersArg}
-disablebridge:defaultAccess(ULib.ACCESS_ADMIN)
+disablebridge:defaultAccess(ULib.ACCESS_ALL)
 disablebridge:help("Disables Ground Bridging for the selected player")
 
 function ulx.enablebridging(calling_ply,target_plys)
@@ -39,5 +39,5 @@ end
 
 local enablebridge = ulx.command("Transformers","ulx enablebridge",ulx.enablebridging,{"!yesbridge","!enablebridge"})
 enablebridge:addParam{type=ULib.cmds.PlayersArg}
-enablebridge:defaultAccess(ULib.ACCESS_ADMIN)
+enablebridge:defaultAccess(ULib.ACCESS_ALL)
 enablebridge:help("Enables Ground Bridging for the selected player")

@@ -86,6 +86,8 @@ function ENT:Initialize()
 		{"Activate","Bridge Pos","Bridge Angle","Reset","Color","Size","Distance"},
 		{"NORMAL","VECTOR","ANGLE","NORMAL","VECTOR","NORMAL","NORMAL"})
 	end
+
+	self:SetNWBool("TFNoBridging",true)
 end
 
 function ENT:OpenBridge()
@@ -108,15 +110,12 @@ function ENT:OpenBridge()
 	end
 
 	self.BridgeActive = true
-
-
 	if(!IsValid(self.Bridge1)) then
 		self.Bridge1 = ents.Create("ground_bridge_portal")
 		self.Bridge1:SetPos(self.Entity:GetPos() + self.Entity:GetForward()*-100)
 		self.Bridge1:SetAngles(self.Entity:GetAngles() + Angle(90,0,0))
+		self.Bridge1.OpenOnSpawn = false
 		self.Bridge1:Spawn()
-		self.Bridge1:SetModelScale(0,0)
-		self.Bridge1.backprop:SetModelScale(0,0)
 		self.Bridge1:SetParent(self.Entity)
 	end
 
@@ -124,78 +123,23 @@ function ENT:OpenBridge()
 		self.Bridge2 = ents.Create("ground_bridge_portal")
 		self.Bridge2:SetPos(self.Bridge2Pos)
 		self.Bridge2:SetAngles(self.Bridge2Ang)
+		self.Bridge1.OpenOnSpawn = false
 		self.Bridge2:Spawn()
-		self.Bridge2:SetModelScale(0,0)
-		self.Bridge2.backprop:SetModelScale(0,0)
 	end
 
-	timer.Create("BridgeIdleSound"..self:EntIndex(),1,1,function()
-		if(IsValid(self.Bridge1)) then
-			self.Bridge1:EmitSound("ambient/levels/citadel/field_loop2.wav",75,100,0.5)
-		end
+	if(IsValid(self.Bridge1) and IsValid(self.Bridge2)) then
+		self.Bridge1.PortalLink = self.Bridge2
+		self.Bridge2.PortalLink = self.Bridge1
 
-		if(IsValid(self.Bridge2)) then
-			self.Bridge2:EmitSound("ambient/levels/citadel/field_loop2.wav",75,100,0.5)
-		end
-	end)
-
-	self.Bridge1:SetNWBool("On",true)
-	self.Bridge2:SetNWBool("On",true)
-
-	if(IsValid(self.Bridge1)) then
 		self.Bridge1:SetColor(Color(self.BridgeColor.x,self.BridgeColor.y,self.BridgeColor.z))
 		self.Bridge1.backprop:SetColor(Color(self.BridgeColor.x,self.BridgeColor.y,self.BridgeColor.z))
-	end
 
-	if(IsValid(self.Bridge2)) then
 		self.Bridge2:SetColor(Color(self.BridgeColor.x,self.BridgeColor.y,self.BridgeColor.z))
 		self.Bridge2.backprop:SetColor(Color(self.BridgeColor.x,self.BridgeColor.y,self.BridgeColor.z))
+
+		self.Bridge1:OpenPortal()
+		self.Bridge2:OpenPortal()
 	end
-
-	timer.Create("BridgeOpen"..self:EntIndex(),0.1,1,function()
-		self.Bridge1:SetModelScale(self.Size,0.5)
-		self.Bridge2:SetModelScale(self.Size,0.5)
-		self.Bridge1.backprop:SetModelScale(-self.Size,0.5)
-		self.Bridge2.backprop:SetModelScale(-self.Size,0.5)
-
-		self.Bridge1:EmitSound(self.OpenSounds[math.random(1,2)])
-		self.Bridge2:EmitSound(self.OpenSounds[math.random(1,2)])
-	end)
-
-	timer.Create("BridgeTP"..self:EntIndex(),0.1,0,function()
-		if(IsValid(self.Bridge1)) then
-			for k, v in ipairs(ents.FindInSphere(self.Bridge1:GetPos(),self.Size*120)) do
-				if(v:GetPhysicsObject():IsValid() and v:GetPhysicsObject():IsMotionEnabled() and v:GetClass() != "ground_bridge_portal" and v:GetNWBool("TFNoBridging",false) == false and v:GetClass() != "ground_bridge_frame") then
-					if(IsValid(v:GetCreator()) or v:IsPlayer() or IsValid(v:GetOwner())) then
-						v:SetPos(self.Bridge2:LocalToWorld(Vector(0,math.random(-self.Size*50,self.Size*50),math.random(self.Size*250,self.Size*400)))) --set random pos so players dont get stuck inside eachother hopefully
-						v:SetVelocity(-v:GetVelocity()) --stop the player so they dont go back through the bridge
-
-						timer.Simple(0.1,function() --delayed so the player teleporting can hear it
-							self.Bridge1:EmitSound("ground_bridge/ground_bridge_teleport.wav")
-							self.Bridge2:EmitSound("ground_bridge/ground_bridge_teleport.wav")
-						end)
-						
-					end
-				end
-			end
-		end
-
-		if(IsValid(self.Bridge2)) then
-			for k, v in ipairs(ents.FindInSphere(self.Bridge2:GetPos(),self.Size*100)) do
-				if(v:GetPhysicsObject():IsValid() and v:GetPhysicsObject():IsMotionEnabled() and v:GetClass() != "ground_bridge_portal" and v:GetNWBool("TFNoBridging",false) == false and v:GetClass() != "ground_bridge_frame") then
-					if(IsValid(v:GetCreator()) or v:IsPlayer() or IsValid(v:GetOwner())) then
-						v:SetPos(self.Bridge1:LocalToWorld(Vector(0,math.random(-self.Size*50,self.Size*50),math.random(self.Size*250,self.Size*400))))
-						v:SetVelocity(-v:GetVelocity())
-
-						timer.Simple(0.1,function()
-							self.Bridge1:EmitSound("ground_bridge/ground_bridge_teleport.wav")
-							self.Bridge2:EmitSound("ground_bridge/ground_bridge_teleport.wav")
-						end)
-					end
-				end
-			end
-		end
-	end)
 end
 
 function ENT:CloseBridge()
@@ -203,57 +147,42 @@ function ENT:CloseBridge()
 
 	self.BridgeActive = false
 
-	timer.Remove("BridgeTP"..self:EntIndex())
-
 	if(IsValid(self.Bridge1)) then
-		self.Bridge1:EmitSound("ground_bridge/ground_bridge_close.wav")
-		self.Bridge1:SetModelScale(0,0.9)
-		self.Bridge1.backprop:SetModelScale(0,0.9)
-		
-		self.Bridge1:StopSound("ambient/levels/citadel/field_loop2.wav")
-
-		timer.Simple(2,function() --stop the sound twice incase someone turned it off before it was fully on
-			if(IsValid(self.Bridge1)) then
-				self.Bridge1:StopSound("ambient/levels/citadel/field_loop2.wav")
-				
-			end
-		end)
-
-		timer.Simple(1,function()
-			self.Bridge1:SetNWBool("On",false)
-		end)
+		self.Bridge1:ClosePortal()
 	end
 
 	if(IsValid(self.Bridge2)) then
-		self.Bridge2:EmitSound("ground_bridge/ground_bridge_close.wav")
-		self.Bridge2:SetModelScale(0,0.9)
-		self.Bridge2.backprop:SetModelScale(0,0.9)
-
-		self.Bridge2:StopSound("ambient/levels/citadel/field_loop2.wav")
-
-		timer.Simple(2,function() --stop the sound twice incase someone turned it off before it was fully on
-			if(IsValid(self.Bridge2)) then
-				self.Bridge2:StopSound("ambient/levels/citadel/field_loop2.wav")
-			end
-		end)
-
-		timer.Simple(1,function()
-			self.Bridge2:SetNWBool("On",false)
-		end)
+		self.Bridge2:ClosePortal()
 	end
 end
 
 function ENT:ResetBridge()
-	self.BridgeActive = false
-	
 	if(IsValid(self.Bridge1)) then
-		self.Bridge1:StopSound("ambient/levels/citadel/field_loop2.wav")
-		self.Bridge1:Remove()
+		if(self.Bridge1:GetNWBool("On",false) == false) then
+			self.Bridge1:Remove()
+
+			self.BridgeActive = false
+		else
+			self.Bridge1:ClosePortal()
+
+			timer.Simple(1,function()
+				self.Bridge1:Remove()
+
+				self.BridgeActive = false
+			end)
+		end
 	end
 	
 	if(IsValid(self.Bridge2)) then
-		self.Bridge2:StopSound("ambient/levels/citadel/field_loop2.wav")
-		self.Bridge2:Remove()
+		if(self.Bridge2:GetNWBool("On",false) == false) then
+			self.Bridge2:Remove()
+		else
+			self.Bridge2:ClosePortal()
+
+			timer.Simple(1,function()
+				self.Bridge2:Remove()
+			end)
+		end
 	end
 end
 
