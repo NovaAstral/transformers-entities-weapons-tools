@@ -102,6 +102,7 @@ function ENT:OpenBridge()
 		self.Bridge1:SetPos(self.Bridge1Pos)
 		self.Bridge1:SetAngles(self.Bridge1Ang)
 		self.Bridge1.OpenOnSpawn = false
+		self.Bridge1.HasController = true
 		self.Bridge1:Spawn()
 	end
 
@@ -109,7 +110,8 @@ function ENT:OpenBridge()
 		self.Bridge2 = ents.Create("ground_bridge_portal")
 		self.Bridge2:SetPos(self.Bridge2Pos)
 		self.Bridge2:SetAngles(self.Bridge2Ang)
-		self.Bridge1.OpenOnSpawn = false
+		self.Bridge2.OpenOnSpawn = false
+		self.Bridge2.HasController = true
 		self.Bridge2:Spawn()
 	end
 

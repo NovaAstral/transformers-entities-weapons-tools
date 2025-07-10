@@ -158,10 +158,11 @@ function ENT:Initialize()
 	util.PrecacheSound("ground_bridge/ground_bridge_close.wav")
 	util.PrecacheSound("ground_bridge/ground_bridge_teleport.wav")
 
+	self.HasController = false
 	self.PortalLink = nil
 	self.PortalSize = 1
 	self.OpenOnSpawn = true
-	self.ServerBridge = true
+	self.ServerBridge = false
 	self.ServerBridgeIP = ""
 
 	self.OpenSounds = {"ground_bridge/ground_bridge_open.wav","ground_bridge/ground_bridge_open2.wav"}
